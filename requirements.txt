@@ -1,0 +1,9 @@
+numpy
+requests
+pandas
+newtulipy
+alpha_vantage
+scipy
+beautifulsoup4
+websockets
+deprecated

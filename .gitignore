@@ -2,5 +2,4 @@
 *.DS_Store
 CFD_guide.pdf
 
-requirements.txt
 bot-env/
