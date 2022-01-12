@@ -1,5 +1,4 @@
 *.pyc
 *.DS_Store
+.gitignore
 CFD_guide.pdf
-
-bot-env/
