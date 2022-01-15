@@ -48,7 +48,7 @@ def million_to_float(string,scale=False):
         elif 'N/A' in string:
             string = 0
 
-        if scale is 'million':
+        if scale == 'million':
             string = float(string)/1000000
         else:
             string = float(string)
