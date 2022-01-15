@@ -93,3 +93,4 @@ class AssetHandler:
         self.tradeableAssets = set(self.filteredAssets.index.tolist())
         print('%i tradeable assets obtained' % len(self.tradeableAssets))
         print(self.tradeableAssets)
+        

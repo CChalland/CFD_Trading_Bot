@@ -311,14 +311,8 @@ class REST(object):
         resp = self.get('/assets/{}'.format(symbol))
         return Asset(resp)
 
-    def get_barset(self,
-                    symbols,
-                    timeframe,
-                    limit=None,
-                    start=None,
-                    end=None,
-                    after=None,
-                    until=None):
+    def get_barset(self, symbols, timeframe, limit=None,
+                    start=None, end=None, after=None, until=None):
         '''Get BarSet(dict[str]->list[Bar])
         The parameter symbols can be either a comma-split string
         or a list of string. Each symbol becomes the key of

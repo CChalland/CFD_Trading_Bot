@@ -29,7 +29,8 @@ class StreamConn(object):
 
     async def connect(self):
         await self._dispatch({'ev': 'status',
-                            'status': 'connecting', 'message': 'Connecting to Polygon'})
+                            'status': 'connecting',
+                            'message': 'Connecting to Polygon'})
         self._ws = await websockets.connect(self._endpoint)
         self._stream = self._recv()
 
@@ -88,7 +89,9 @@ class StreamConn(object):
                 for update in msg:
                     yield update
         except Exception as e:
-            await self._dispatch({'ev': 'status', 'status': 'disconnected', 'message':
+            await self._dispatch({'ev': 'status',
+                                'status': 'disconnected',
+                                'message':
                                 f'Polygon Disconnected Unexpectedly ({e})'})
             await self.close()
             asyncio.ensure_future(self._ensure_ws())
@@ -117,7 +120,9 @@ class StreamConn(object):
                     await self.subscribe(self._streams)
                 break
             except Exception as e:
-                await self._dispatch({'ev': 'status', 'status': 'connect failed', 'message':
+                await self._dispatch({'ev': 'status',
+                                    'status': 'connect failed',
+                                    'message':
                                     f'Polygon Connection Failed ({e})'})
                 self._ws = None
                 self._retries += 1

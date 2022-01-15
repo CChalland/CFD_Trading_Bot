@@ -108,7 +108,8 @@ class REST(object):
 
         return QuotesV2(raw)
 
-    def historic_agg(self, size, symbol, _from=None, to=None, limit=None):
+    def historic_agg(self, size, symbol,
+                    _from=None, to=None, limit=None):
         path = '/historic/agg/{}/{}'.format(size, symbol)
         params = {}
         if _from is not None:
