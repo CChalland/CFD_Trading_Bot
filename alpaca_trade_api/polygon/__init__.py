@@ -1,2 +1,2 @@
-from .rest import REST
-from .streamconn import StreamConn
+from .rest import REST  # noqa
+from .streamconn import StreamConn # noqa

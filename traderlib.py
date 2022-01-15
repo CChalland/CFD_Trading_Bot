@@ -39,10 +39,10 @@ class Trader:
                 return False
             else:
                 if direction:
-                    if (direction == 'sell') and (not asset.shortable):
+                    if (direction is 'sell') and (not asset.shortable):
                         self._L.info('%s is not shortable, locking it' % ticker)
                         return False
-                    elif (direction == 'buy') and (not asset.tradable):
+                    elif (direction is 'buy') and (not asset.tradable):
                         self._L.info('%s is not tradable, locking it' % ticker)
                         return False
 
@@ -70,9 +70,9 @@ class Trader:
         #this function takes a price as a input and sets the stoploss there
 
         try:
-            if direction == 'buy':
+            if direction is 'buy':
                 self.stopLoss = float(stopLoss - stopLoss*gvars.stopLossMargin)
-            elif direction == 'sell':
+            elif direction is 'sell':
                 self.stopLoss = float(stopLoss + stopLoss*gvars.stopLossMargin)
             else:
                 raise ValueError
@@ -97,7 +97,7 @@ class Trader:
         except Exception as e:
             self._L.info('ERROR_TP! Direction was not clear when setting stoploss!')
             self._L.info(e)
-            self.takeProfit = round(entryPrice + diff*gvars.hardCodedWinThreshold,2)
+            self.takeProfit = round(entryPrice + diff*1.5,2)
 
         return self.takeProfit
 
@@ -106,7 +106,7 @@ class Trader:
 
         account = self.alpaca.get_account()
         if float(account.buying_power) < self.operEquity:
-            self._L.info('Oops! Not enough buying power (%d$), aborting' % account.buying_power)
+            self._L.info('Oops! Not enough buying power (%d$), aborting' % float(account.buying_power))
             time.sleep(3)
             return False
         else:
@@ -122,7 +122,7 @@ class Trader:
         attempt = 1
         while True:
             try: # fetch the data
-                if interval == '30Min':
+                if interval is '30Min':
                     df = self.alpaca.get_barset(stock.name, '5Min', limit).df[stock.name]
                     stock.df = df.resample('30min').agg({
                                         'open':'first',
@@ -192,20 +192,22 @@ class Trader:
         qty = orderDict['qty']
         time_in_force = 'gtc'
 
-        if orderDict['type'] == 'limit': # adjust order for a limit type
+        if orderDict['type'] is 'limit': # adjust order for a limit type
             type = 'limit'
             self._L.info('Desired limit price for limit order: %.3f$' % orderDict['limit_price'])
 
-            if side == 'buy':
+            if side is 'buy':
                 limit_price = orderDict['limit_price'] * (1+self.pctMargin)
-            elif side == 'sell':
+                # this line modifies the price that comes from the orderDict
+                # adding the needed flexibility for making sure the order goes through
+            elif side is 'sell':
                 limit_price = orderDict['limit_price'] * (1-self.pctMargin)
             else:
                 self._L.info('Side not identified: ' + str(side))
                 block_thread(self._L,e,self.thName)
             self._L.info('Corrected (added margin) limit price: %.3f$' % limit_price)
 
-        elif orderDict['type'] == 'market': # adjust order for a market type
+        elif orderDict['type'] is 'market': # adjust order for a market type
             type = 'market'
             self._L.info('Desired limit price for market order: %.3f$' % orderDict['limit_price'])
 
@@ -213,7 +215,7 @@ class Trader:
         attempt = 0
         while attempt < gvars.maxAttempts['SO']:
             try:
-                if type == 'limit':
+                if type is 'limit':
                     self.order = self.alpaca.submit_order(
                                             side=side,
                                             qty=qty,
@@ -226,7 +228,7 @@ class Trader:
                     self._L.info(self.order)
                     return True
 
-                elif type == 'market':
+                elif type is 'market':
                     self.order = self.alpaca.submit_order(
                                             side=side,
                                             qty=qty,
@@ -491,11 +493,11 @@ class Trader:
         stopLoss = self.set_stoploss(ema50,direction=stock.direction) # stoploss = EMA50
         takeProfit = self.set_takeprofit(stock.avg_entry_price,stopLoss)
 
-        if stock.direction == 'buy':
+        if stock.direction is 'buy':
             targetGainInit = int((takeProfit-stock.avg_entry_price) * sharesQty)
             reverseDirection = 'sell'
 
-        elif stock.direction == 'sell':
+        elif stock.direction is 'sell':
             targetGainInit = int((stock.avg_entry_price-takeProfit) * sharesQty)
             reverseDirection = 'buy'
 
@@ -536,16 +538,16 @@ class Trader:
                 currentPrice = stock.currentPrice
 
             # calculate current gain
-            if stock.direction == 'buy':
+            if stock.direction is 'buy':
                 currentGain = (currentPrice - stock.avg_entry_price) * sharesQty
-            elif stock.direction == 'sell':
+            elif stock.direction is 'sell':
                 currentGain = (stock.avg_entry_price - currentPrice) * sharesQty
 
 
             # if stop loss reached
             if (
-                    (stock.direction == 'buy' and currentPrice <= stopLoss) or
-                    (stock.direction == 'sell' and currentPrice >= stopLoss)
+                    (stock.direction is 'buy' and currentPrice <= stopLoss) or
+                    (stock.direction is 'sell' and currentPrice >= stopLoss)
                 ):
                 self._L.info('STOPLOSS reached at price %.3f' % currentPrice)
                 self.success = 'NO: STOPLOSS'
