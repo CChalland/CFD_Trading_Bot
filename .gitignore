@@ -1,5 +1,6 @@
 *.pyc
 *.DS_Store
+*__pycache__*
 .gitignore
 CFD_guide.pdf
 .env
